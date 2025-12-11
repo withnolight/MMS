@@ -23,6 +23,7 @@ def init_db():
             password TEXT NOT NULL,
             user_type TEXT DEFAULT 'student',
             email TEXT UNIQUE,
+            borrowed_count INTEGER DEFAULT 0,
             maxborrow INTEGER DEFAULT 3
         )
     ''')  # 创建用户表
