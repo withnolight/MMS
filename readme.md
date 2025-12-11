@@ -192,4 +192,4 @@ A: Windows系统请确保已安装Microsoft YaHei字体，或修改代码中的�
 - **语言**：Python 3.7+
 - **GUI框架**：Tkinter + ttkbootstrap
 - **数据库**：SQLite 3
-- **许可证**：GNU GPLv3
+- **许可证**：Apache License 2.0
