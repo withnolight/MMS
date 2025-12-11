@@ -19,7 +19,6 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id BIGINT PRIMARY KEY,
             username TEXT NOT NULL,
-            gender TEXT,
             password TEXT NOT NULL,
             user_type TEXT DEFAULT 'student',
             email TEXT UNIQUE,

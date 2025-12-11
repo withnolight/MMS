@@ -1,12 +1,12 @@
 import ctypes
 import sqlite3
 import tkinter as tk
-from tkinter import ttk
-import datetime
 from tkinter import messagebox
+import datetime
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 
 def adjust_treeview_column_widths(tree, min_padding=50):
-    import tkinter as tk
     import tkinter.font as tkFont
 
     columns = tree["columns"]
@@ -24,24 +24,22 @@ def adjust_treeview_column_widths(tree, min_padding=50):
         tree.column(col, width=max_width + min_padding)
 
 def book_query():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("查询书籍状态")
     win.geometry("1200x600")
 
     ttk.Label(win, text="输入书名或作者或ISBN", font=("Microsoft YaHei", 14)).pack(pady=30)
 
-    # 新建一行的 Frame
-    input_frame = tk.Frame(win)
+    input_frame = ttk.Frame(win)
     input_frame.pack(pady=10)
 
     entry = ttk.Entry(input_frame, width=50)
-    entry.pack(side=tk.LEFT, padx=5)
+    entry.pack(side=LEFT, padx=5)
 
     button = ttk.Button(input_frame, text="查询", 
-                        command=lambda: search_books(entry.get(), tree))
-    button.pack(side=tk.LEFT, padx=5)
+                        command=lambda: search_books(entry.get(), tree), bootstyle="info")
+    button.pack(side=LEFT, padx=5)
 
-    # TreeView 在下面
     columns = ("ID", "书名", "作者", "出版社", "年份", "ISBN", "类别", "库存量")
     tree = ttk.Treeview(win, columns=columns, show="headings")
 
@@ -49,7 +47,7 @@ def book_query():
         tree.heading(col, text=col)
         tree.column(col, width=100)
 
-    tree.pack(fill=tk.BOTH, expand=True, pady=20)
+    tree.pack(fill=BOTH, expand=True, pady=20)
 
 def search_books(query, tree):
     """根据查询条件搜索书籍并更新树视图"""
@@ -67,43 +65,39 @@ def search_books(query, tree):
     results = cursor.fetchall()
     conn.close()
 
-    # 清空现有数据
     for item in tree.get_children():
         tree.delete(item)
 
-    # 插入新数据
     for row in results:
-        tree.insert("", tk.END, values=row)
+        tree.insert("", END, values=row)
     
     adjust_treeview_column_widths(tree)
 
 def borrow_query():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("查询借阅记录")
-    win.geometry("800x400")
+    win.geometry("1200x600")
 
     ttk.Label(win, text="输入读者ID或书名", font=("Microsoft YaHei", 14)).pack(pady=30)
 
-    # 新建一行的 Frame
-    input_frame = tk.Frame(win)
+    input_frame = ttk.Frame(win)
     input_frame.pack(pady=10)
 
     entry = ttk.Entry(input_frame, width=50)
-    entry.pack(side=tk.LEFT, padx=5)
+    entry.pack(side=LEFT, padx=5)
 
     button = ttk.Button(input_frame, text="查询", 
-                        command=lambda: search_borrows(entry.get(), tree))
-    button.pack(side=tk.LEFT, padx=5)
+                        command=lambda: search_borrows(entry.get(), tree), bootstyle="info")
+    button.pack(side=LEFT, padx=5)
 
-    # TreeView 在下面
     columns = ("借阅ID", "读者ID", "书名", "副本ID", "借阅日期", "归还日期", "归还状态")
     tree = ttk.Treeview(win, columns=columns, show="headings")
 
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=100)
+        tree.column(col, width=120)
 
-    tree.pack(fill=tk.BOTH, expand=True, pady=20)
+    tree.pack(fill=BOTH, expand=True, pady=20)
 
 def search_borrows(query, tree):
     """根据查询条件搜索借阅记录并更新树视图"""
@@ -122,48 +116,33 @@ def search_borrows(query, tree):
     results = cursor.fetchall()
     conn.close()
 
-    # 清空现有数据
     for item in tree.get_children():
         tree.delete(item)
 
-    # 插入新数据
     for row in results:
-        tree.insert("", tk.END, values=row)
+        tree.insert("", END, values=row)
 
     adjust_treeview_column_widths(tree)
 
-def open_operation_window(number):
-    """打开一个新的操作窗口"""
-    win = tk.Toplevel()
-    win.title(f"操作窗口 {number}")
-    win.geometry("300x150")
-
-    ttk.Label(win, text=f"这里是操作窗口 {number}", font=("Arial", 14)).pack(pady=30)
-    ttk.Button(win, text="关闭", command=win.destroy).pack()
-
 def book_borrow():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("借书")
     win.geometry("600x400")
 
     ttk.Label(win, text="请输入借书信息", font=("Microsoft YaHei", 16)).pack(pady=25)
 
-    # ====== 表单区域（用 grid 更好看） ======
-    form = tk.Frame(win)
+    form = ttk.Frame(win)
     form.pack(pady=20)
 
-    # 第一行：读者 ID
-    ttk.Label(form, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    ttk.Label(form, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky=E)
     entry_user_id = ttk.Entry(form, width=35)
     entry_user_id.grid(row=0, column=1, padx=10, pady=10)
 
-    # 第二行：副本 ID
-    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky=E)
     entry_book_id = ttk.Entry(form, width=35)
     entry_book_id.grid(row=1, column=1, padx=10, pady=10)
 
-    # 第三行：按钮（居中）
-    button = ttk.Button(form, text="借书",
+    button = ttk.Button(form, text="借书", bootstyle="success",
                         command=lambda: execute_borrow(entry_user_id.get(), entry_book_id.get()))
     button.grid(row=2, column=0, columnspan=2, pady=20)
 
@@ -171,13 +150,12 @@ def execute_borrow(user_id, book_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    # 检查副本是否可借
     cursor.execute("SELECT status, borrowable FROM copies WHERE id=?", (book_id,))
     result01 = cursor.fetchone()
     cursor.execute("SELECT maxborrow, borrowed_count FROM users WHERE id=?", (user_id,))
     result02 = cursor.fetchone()
 
-    result= result01 and (result02[1] < result02[0])
+    result = result01 and (result02[1] < result02[0])
 
     if not result:
         if not result02:
@@ -189,19 +167,16 @@ def execute_borrow(user_id, book_id):
         if status != 'available' or borrowable == 0:
             messagebox.showerror("错误", "该副本不可借！")
         else:
-            # 执行借书操作
             cursor.execute("""
                 INSERT INTO borrows (user_id, copy_id)
                 VALUES (?, ?)
             """, (user_id, book_id))
 
-            # 更新副本状态
             cursor.execute("""
                 UPDATE copies
                 SET status='borrowed'
                 WHERE id=?
             """, (book_id,))
-            # 更新用户已借书数量
             cursor.execute("""
                 UPDATE users
                 SET borrowed_count = borrowed_count + 1
@@ -212,32 +187,26 @@ def execute_borrow(user_id, book_id):
             messagebox.showinfo("成功", "借书成功！")
 
     conn.close()
-    win = tk.Toplevel()
-    win.title("借书")
 
 def book_return():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("还书")
     win.geometry("600x400")
 
     ttk.Label(win, text="请输入还书信息", font=("Microsoft YaHei", 16)).pack(pady=25)
 
-    # ====== 表单区域（用 grid 更好看） ======
-    form = tk.Frame(win)
+    form = ttk.Frame(win)
     form.pack(pady=20)
 
-    # 第一行：读者 ID
-    ttk.Label(form, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    ttk.Label(form, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky=E)
     entry_user_id = ttk.Entry(form, width=35)
     entry_user_id.grid(row=0, column=1, padx=10, pady=10)
 
-    # 第二行：副本 ID
-    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky=E)
     entry_book_id = ttk.Entry(form, width=35)
     entry_book_id.grid(row=1, column=1, padx=10, pady=10)
 
-    # 第三行：按钮（居中）
-    button = ttk.Button(form, text="还书",
+    button = ttk.Button(form, text="还书", bootstyle="warning",
                         command=lambda: execute_return(entry_user_id.get(), entry_book_id.get()))
     button.grid(row=2, column=0, columnspan=2, pady=20)
 
@@ -245,7 +214,6 @@ def execute_return(user_id, book_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    # 检查借阅记录是否存在且未归还
     cursor.execute("""
         SELECT id FROM borrows
         WHERE user_id=? AND copy_id=? AND returned=0
@@ -257,21 +225,18 @@ def execute_return(user_id, book_id):
     else:
         borrow_id = borrow_record[0]
 
-        # 执行还书操作
         cursor.execute("""
             UPDATE borrows
             SET returned=1, return_date=CURRENT_TIMESTAMP
             WHERE id=?
         """, (borrow_id,))
 
-        # 更新副本状态
         cursor.execute("""
             UPDATE copies
             SET status='available'
             WHERE id=?
         """, (book_id,))
 
-        # 更新用户已借书数量
         cursor.execute("""
             UPDATE users
             SET borrowed_count = borrowed_count - 1
@@ -284,44 +249,52 @@ def execute_return(user_id, book_id):
     conn.close()
 
 def book_add():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("新增书籍")
     win.geometry("600x700")
     ttk.Label(win, text="请输入新增书籍信息", font=("Microsoft YaHei", 16)).pack(pady=25)
-    # ====== 表单区域（用 grid 更好看） ======
-    form = tk.Frame(win)
+    
+    form = ttk.Frame(win)
     form.pack(pady=20)
-    # 第一行：书名
-    ttk.Label(form, text="书名：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="书名：", font=("Microsoft YaHei", 12)).grid(row=0, column=0, padx=10, pady=10, sticky=E)
     entry_title = ttk.Entry(form, width=35)
     entry_title.grid(row=0, column=1, padx=10, pady=10)
-    ttk.Label(form, text="作者：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="作者：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, padx=10, pady=10, sticky=E)
     entry_author = ttk.Entry(form, width=35)
     entry_author.grid(row=1, column=1, padx=10, pady=10)
-    ttk.Label(form, text="出版社：", font=("Microsoft YaHei", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="出版社：", font=("Microsoft YaHei", 12)).grid(row=2, column=0, padx=10, pady=10, sticky=E)
     entry_publisher = ttk.Entry(form, width=35)
     entry_publisher.grid(row=2, column=1, padx=10, pady=10)
-    ttk.Label(form, text="年份：", font=("Microsoft YaHei", 12)).grid(row=3, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="年份：", font=("Microsoft YaHei", 12)).grid(row=3, column=0, padx=10, pady=10, sticky=E)
     entry_year = ttk.Entry(form, width=35)
     entry_year.grid(row=3, column=1, padx=10, pady=10)
-    ttk.Label(form, text="ISBN：", font=("Microsoft YaHei", 12)).grid(row=4, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="ISBN：", font=("Microsoft YaHei", 12)).grid(row=4, column=0, padx=10, pady=10, sticky=E)
     entry_ISBN = ttk.Entry(form, width=35)
     entry_ISBN.grid(row=4, column=1, padx=10, pady=10)
-    ttk.Label(form, text="简介：", font=("Microsoft YaHei", 12)).grid(row=5, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="简介：", font=("Microsoft YaHei", 12)).grid(row=5, column=0, padx=10, pady=10, sticky=E)
     entry_description = ttk.Entry(form, width=35)
     entry_description.grid(row=5, column=1, padx=10, pady=10)
-    ttk.Label(form, text="类别ID：", font=("Microsoft YaHei", 12)).grid(row=6, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="类别ID：", font=("Microsoft YaHei", 12)).grid(row=6, column=0, padx=10, pady=10, sticky=E)
     entry_category_id = ttk.Entry(form, width=35)
     entry_category_id.grid(row=6, column=1, padx=10, pady=10)
-    ttk.Label(form, text="新增本数：", font=("Microsoft YaHei", 12)).grid(row=7, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="新增本数：", font=("Microsoft YaHei", 12)).grid(row=7, column=0, padx=10, pady=10, sticky=E)
     entry_copies = ttk.Entry(form, width=35)
     entry_copies.grid(row=7, column=1, padx=10, pady=10)
-    frame01= tk.Frame(form)
-    frame01.grid(row=8, column=1, padx=10, pady=10, sticky="w")
+    
+    frame01 = ttk.Frame(form)
+    frame01.grid(row=8, column=1, padx=10, pady=10, sticky=W)
     borrowable_var = tk.IntVar(value=1)
-    ttk.Checkbutton(frame01, text="是否可借", variable=borrowable_var).pack(side=tk.RIGHT)
-    # 第三行：按钮（居中）
-    button = ttk.Button(frame01, text="新增书籍",
+    ttk.Checkbutton(frame01, text="是否可借", variable=borrowable_var).pack(side=LEFT)
+    
+    button = ttk.Button(frame01, text="新增书籍", bootstyle="success",
                         command=lambda: execute_add_book(
                             entry_title.get(),
                             entry_author.get(),
@@ -333,10 +306,9 @@ def book_add():
                             entry_copies.get(),
                             borrowable_var.get()
                         ))
-    button.pack(side=tk.LEFT, padx=10)
+    button.pack(side=LEFT, padx=10)
 
 def execute_add_book(title, author, publisher, year, isbn, description, category_id, copies, borrowable):
-    #先检查是否存在该种书，如果存在则只增加副本数量，不存在需要先新增书籍记录
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT id, copies FROM books WHERE isbn=?", (isbn,))
@@ -360,19 +332,19 @@ def execute_add_book(title, author, publisher, year, isbn, description, category
     messagebox.showinfo("成功", "书籍新增成功！")
 
 def book_damage():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("书籍报损")
     win.geometry("600x400")
     ttk.Label(win, text="请输入报损副本ID", font=("Microsoft YaHei", 16)).pack(pady=25)
-    # ====== 表单区域（用 grid 更好看） ======
-    form = tk.Frame(win)
+    
+    form = ttk.Frame(win)
     form.pack(pady=20)
-    # 第一行：副本 ID
-    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei",12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    
+    ttk.Label(form, text="副本ID：", font=("Microsoft YaHei",12)).grid(row=0, column=0, padx=10, pady=10, sticky=E)
     entry_copy_id = ttk.Entry(form, width=35)
     entry_copy_id.grid(row=0, column=1, padx=10, pady=10)
-    # 第二行：按钮（居中）
-    button = ttk.Button(form, text="标记为报损",
+    
+    button = ttk.Button(form, text="标记为报损", bootstyle="danger",
                         command=lambda: marked_as_damaged(entry_copy_id.get()))
     button.grid(row=1, column=0, columnspan=2, pady=10)
 
@@ -380,7 +352,6 @@ def marked_as_damaged(copy_id):
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    # 检查副本是否存在
     cursor.execute("SELECT status FROM copies WHERE id=?", (copy_id,))
     result = cursor.fetchone()
 
@@ -391,8 +362,6 @@ def marked_as_damaged(copy_id):
         if status == 'damaged':
             messagebox.showinfo("提示", "该副本已标记为报损！")
         else:
-            # 标记为报损
-            # 先查询是否是借出的状态，若是则需要先降低对应用户的已借书数量
             if status == 'borrowed':
                 cursor.execute("""
                     SELECT user_id FROM borrows
@@ -426,95 +395,113 @@ def marked_as_damaged(copy_id):
     conn.close()
 
 def user_management():
-    win = tk.Toplevel()
+    win = ttk.Toplevel()
     win.title("读者管理")
     win.geometry("1600x800")
     ttk.Label(win, text="读者管理", font=("Microsoft YaHei", 16)).pack(pady=25)
-    form = tk.Frame(win)
+    form = ttk.Frame(win)
     form.pack(pady=20)
-    frame01= tk.Frame(form)
-    frame01.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-    frame02= tk.Frame(form)
-    frame02.grid(row=0, column=1, padx=10, pady=10,sticky="w")
-    ##frame01放置读者新增和删除功能，frame02放置读者查询功能
-    ttk.Label(frame01, text="读者新增", font=("Microsoft YaHei", 14)).pack()
-    frame01_1= tk.Frame(frame01)
-    frame01_1.pack(pady=10)
-    ttk.Label(frame01_1, text="读者ID：", font=("Microsoft YaHei", 12)).pack(side=tk.LEFT, padx=5)
-    entry_user_id = ttk.Entry(frame01_1, width=20)
-    entry_user_id.pack(side=tk.LEFT, padx=5)
-    frame01_2= tk.Frame(frame01)
-    frame01_2.pack(pady=10)
-    ttk.Label(frame01_2, text="用户名：", font=("Microsoft YaHei", 12)).pack(side=tk.LEFT, padx=5)
-    entry_username = ttk.Entry(frame01_2, width=20)
-    entry_username.pack(side=tk.LEFT, padx=5)
-    frame01_3= tk.Frame(frame01)
-    frame01_3.pack(pady=10)
-    ttk.Label(frame01_3, text="密码：  ", font=("Microsoft YaHei", 12)).pack(side=tk.LEFT, padx=5)
-    entry_password = ttk.Entry(frame01_3, width=20, show="*")
-    entry_password.pack(side=tk.LEFT, padx=5)
-    frame01_4= tk.Frame(frame01)
-    frame01_4.pack(pady=10)
-    ttk.Button(frame01_4, text="新增读者",
-               command=lambda: add_user(entry_user_id.get(), entry_username.get(), entry_password.get())).pack(side=tk.LEFT, padx=5)
-
-    ttk.Label(frame01, text="读者删除", font=("Microsoft YaHei", 14)).pack()
-    frame01_5= tk.Frame(frame01)
-    frame01_5.pack(pady=10)
-    ttk.Label(frame01_5,text="读者ID:", font=("Microsoft YaHei", 12)).pack(side=tk.LEFT, padx=5)
-    entry_delete_user_id = ttk.Entry(frame01_5, width=20)
-    entry_delete_user_id.pack(side=tk.LEFT, padx=5)
-    frame01_6= tk.Frame(frame01)
-    frame01_6.pack(pady=10)
-    ttk.Button(frame01_6, text="删除读者",
-               command=lambda: delete_user(entry_delete_user_id.get())).pack(side=tk.LEFT, padx=5)
+    frame01 = ttk.Frame(form)
+    frame01.grid(row=0, column=0, padx=10, pady=10, sticky=W)
+    frame02 = ttk.Frame(form)
+    frame02.grid(row=0, column=1, padx=10, pady=10, sticky=W)
     
-    ## 读者查询功能
+    ttk.Label(frame01, text="读者新增", font=("Microsoft YaHei", 14)).grid(row=0, column=0, columnspan=2, pady=(0,10), sticky=W)
+
+    ttk.Label(frame01, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=1, column=0, sticky=E, padx=5, pady=5)
+    entry_user_id = ttk.Entry(frame01, width=25)
+    entry_user_id.grid(row=1, column=1, sticky=W, padx=5)
+
+    ttk.Label(frame01, text="用户名：", font=("Microsoft YaHei", 12)).grid(row=2, column=0, sticky=E, padx=5, pady=5)
+    entry_username = ttk.Entry(frame01, width=25)
+    entry_username.grid(row=2, column=1, sticky=W, padx=5)
+
+    ttk.Label(frame01, text="密码：", font=("Microsoft YaHei", 12)).grid(row=3, column=0, sticky=E, padx=5, pady=5)
+    entry_password = ttk.Entry(frame01, width=25, show="*")
+    entry_password.grid(row=3, column=1, sticky=W, padx=5)
+
+    ttk.Label(frame01, text="邮箱：", font=("Microsoft YaHei", 12)).grid(row=4, column=0, sticky=E, padx=5, pady=5)
+    entry_email = ttk.Entry(frame01, width=25)
+    entry_email.insert(0, "可选")
+    entry_email.grid(row=4, column=1, sticky=W, padx=5)
+
+    ttk.Label(frame01, text="身份：", font=("Microsoft YaHei", 12)).grid(row=5, column=0, sticky=E, padx=5, pady=5)
+    combo_usertype = ttk.Combobox(frame01, width=22, state="readonly")
+    combo_usertype["values"] = ["student", "teacher"]
+    combo_usertype.current(0)
+    combo_usertype.grid(row=5, column=1, sticky=W, padx=5)
+
+    btn_add = ttk.Button(
+        frame01,
+        text="新增读者",
+        bootstyle="success",
+        command=lambda: add_user(
+            entry_user_id.get(),
+            entry_username.get(),
+            entry_password.get(),
+            combo_usertype.get(),
+            entry_email.get() if entry_email.get() != "可选" else None
+        )
+    )
+    btn_add.grid(row=6, column=0, columnspan=2, pady=10)
+
+    ttk.Label(frame01, text="读者删除", font=("Microsoft YaHei", 14)).grid(row=7, column=0, columnspan=2, pady=(20,10), sticky=W)
+
+    ttk.Label(frame01, text="读者ID：", font=("Microsoft YaHei", 12)).grid(row=8, column=0, sticky=E, padx=5, pady=5)
+    entry_delete_user_id = ttk.Entry(frame01, width=25)
+    entry_delete_user_id.grid(row=8, column=1, sticky=W, padx=5)
+
+    btn_delete = ttk.Button(
+        frame01,
+        text="删除读者",
+        bootstyle="danger",
+        command=lambda: delete_user(entry_delete_user_id.get())
+    )
+    btn_delete.grid(row=9, column=0, columnspan=2, pady=10)
+
     ttk.Label(frame02, text="读者查询", font=("Microsoft YaHei", 14)).pack()
-    frame02_1= tk.Frame(frame02)
+    frame02_1 = ttk.Frame(frame02)
     frame02_1.pack(pady=10)
-    ttk.Label(frame02_1, text="读者ID或用户名：", font=("Microsoft YaHei", 12)).pack(side=tk.LEFT, padx=5)
+    ttk.Label(frame02_1, text="读者ID或用户名：", font=("Microsoft YaHei", 12)).pack(side=LEFT, padx=5)
     entry_query = ttk.Entry(frame02_1, width=30)
-    entry_query.pack(side=tk.LEFT, padx=5)
-    button_query = ttk.Button(frame02_1, text="查询",
+    entry_query.pack(side=LEFT, padx=5)
+    button_query = ttk.Button(frame02_1, text="查询", bootstyle="info",
                         command=lambda: search_users(entry_query.get(), tree))
-    button_query.pack(side=tk.LEFT, padx=5)
-    # TreeView 在下面
-    columns = ("ID", "用户名", "性别", "用户类型", "邮箱", "已借书数量", "最大可借数量")
+    button_query.pack(side=LEFT, padx=5)
+    
+    columns = ("ID", "用户名", "用户类型", "邮箱", "已借书数量", "最大可借数量")
     tree = ttk.Treeview(frame02, columns=columns, show="headings")
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=100)
-    tree.pack(fill=tk.BOTH, expand=True, pady=20)
+        tree.column(col, width=180)
+    tree.pack(fill=BOTH, expand=True, pady=20)
 
 def search_users(query, tree):
     """根据查询条件搜索读者并更新树视图"""
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id, username, gender, user_type, email, borrowed_count, maxborrow
+        SELECT id, username, user_type, email, borrowed_count, maxborrow
         FROM users
         WHERE id LIKE ? OR username LIKE ?
     """, (f"%{query}%", f"%{query}%"))
     results = cursor.fetchall()
     conn.close()
 
-    # 清空现有的树视图内容
     for item in tree.get_children():
         tree.delete(item)
 
-    # 插入新的查询结果
     for row in results:
-        tree.insert("", tk.END, values=row)
+        tree.insert("", END, values=row)
     
     adjust_treeview_column_widths(tree)
 
-def add_user(user_id, username, password):
-    conn= sqlite3.connect("database.db")
+def add_user(user_id, username, password, user_type, email):
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT INTO users (id, username, password) VALUES (?, ?, ?)",
-                       (user_id, username, password))
+        cursor.execute("INSERT INTO users (id, username, password, user_type, email, maxborrow) VALUES (?, ?, ?, ?, ?, ?)",
+                       (user_id, username, password, user_type, email, 3 if user_type == 'student' else 10))
         conn.commit()
         messagebox.showinfo("成功", "读者新增成功！")
     except sqlite3.IntegrityError:
@@ -522,7 +509,7 @@ def add_user(user_id, username, password):
     conn.close()
 
 def delete_user(user_id):
-    conn= sqlite3.connect("database.db")
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT borrowed_count FROM users WHERE id=?", (user_id,))
     result = cursor.fetchone()
@@ -548,60 +535,45 @@ def update_clock(label):
     label.after(1000, update_clock, label)
 
 def create_main_window(username):
-    root = tk.Tk()
-    ctypes.windll.shcore.SetProcessDpiAwareness(1)
-    ScaleFactor = ctypes.windll.shcore.GetScaleFactorForDevice(0)
-    root.tk.call('tk',"scaling", ScaleFactor/75)
-    style = ttk.Style()
-    style.configure("Treeview", 
-                rowheight = int(28 * float(ScaleFactor) / 96),
-                font=("Microsoft YaHei", 9))
-    root.title("主界面")
-    root.geometry("400x600")
+    root = ttk.Window(themename="darkly")
+    root.title("图书管理系统")
+    root.geometry("500x700")
 
-    # 登录用户显示
-    user_label = ttk.Label(root, text=f"当前登录用户：{username}", font=("Arial", 14))
-    user_label.pack(pady=10)
+    ttk.Label(root, text=f"当前登录用户：{username}", font=("Microsoft YaHei", 14)).pack(pady=15)
 
     bookcount = 0
-    conn= sqlite3.connect("database.db")
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("SELECT COUNT(*) FROM books")
     bookcount = cursor.fetchone()[0]
-
-
-    user_label = ttk.Label(root, text=f"当前系统共有书籍数量：{bookcount}", font=("Arial", 12))
-    user_label.pack(pady=10)
     conn.close()
 
-    # 时钟
-    clock_label = ttk.Label(root, text="", font=("Arial", 12))
+    ttk.Label(root, text=f"系统共有书籍数量：{bookcount}", font=("Microsoft YaHei", 12)).pack(pady=10)
+
+    clock_label = ttk.Label(root, text="", font=("Microsoft YaHei", 11))
     clock_label.pack(pady=10)
     update_clock(clock_label)
 
-    # 操作按钮
     button_frame = ttk.Frame(root)
-    button_frame.pack(pady=40)
+    button_frame.pack(pady=30, padx=20, fill=BOTH, expand=True)
 
-    ttk.Button(button_frame, text="查询书籍状态", width=20,
-               command=lambda: book_query()).pack(pady=5)
-    ttk.Button(button_frame, text="查询借阅记录", width=20,
-               command=lambda: borrow_query()).pack(pady=5)
-    ttk.Button(button_frame, text="借书", width=20,
-               command=lambda: book_borrow()).pack(pady=5)
-    ttk.Button(button_frame, text="还书", width=20,
-               command=lambda: book_return()).pack(pady=5)
-    ttk.Button(button_frame, text="新增书籍", width=20,
-               command=lambda: book_add()).pack(pady=5)
-    ttk.Button(button_frame, text="书籍报损", width=20,
-               command=lambda: book_damage()).pack(pady=5)
-    ttk.Button(button_frame, text="读者管理", width=20,
-               command=lambda: user_management()).pack(pady=5)
-    ttk.Button(button_frame, text="退出登录", width=20,
-               command=lambda: quit_application()).pack(pady=5)
+    ttk.Button(button_frame, text="查询书籍状态", width=25, bootstyle="info",
+               command=lambda: book_query()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="查询借阅记录", width=25, bootstyle="info",
+               command=lambda: borrow_query()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="借书", width=25, bootstyle="success",
+               command=lambda: book_borrow()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="还书", width=25, bootstyle="warning",
+               command=lambda: book_return()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="新增书籍", width=25, bootstyle="success",
+               command=lambda: book_add()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="书籍报损", width=25, bootstyle="danger",
+               command=lambda: book_damage()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="读者管理", width=25, bootstyle="primary",
+               command=lambda: user_management()).pack(pady=5, fill=X)
+    ttk.Button(button_frame, text="退出登录", width=25, bootstyle="danger-outline",
+               command=lambda: quit_application()).pack(pady=5, fill=X)
     root.mainloop()
-
-# 示例：假设登录用户名是 admin
 
 if __name__ == "__main__":
     username = "debug_admin"
