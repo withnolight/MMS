@@ -29,24 +29,36 @@ def login():
         messagebox.showinfo("登录成功", f"欢迎你，{username}！")
         root.destroy()
         import main
+        main.create_main_window(username)
     else:
         messagebox.showerror("登录失败", "用户名或密码错误")
 
 
 root.title("登录系统")
-root.geometry("500x240")
+root.geometry("600x400")
+root.configure(bg="#f0f0f0")
 
-label_user = Label(root, text="用户名:")
+# Add a title label
+label_title = Label(root, text="欢迎登录图书馆管理系统", font=("Microsoft YaHei", 16, "bold"), background="#f0f0f0")
+label_title.pack(pady=10)
+
+# Update label styles
+label_user = Label(root, text="用户名:", font=("Microsoft YaHei", 12), background="#f0f0f0")
 label_user.pack(pady=5)
-entry_user = Entry(root)
+entry_user = Entry(root, font=("Microsoft YaHei", 12), width=30)
 entry_user.pack()
 
-label_password = Label(root, text="密码:")
+label_password = Label(root, text="密码:", font=("Microsoft YaHei", 12), background="#f0f0f0")
 label_password.pack(pady=5)
-entry_password = Entry(root, show="*")
+entry_password = Entry(root, show="*", font=("Microsoft YaHei", 12), width=30)
 entry_password.pack()
 
-btn_login = Button(root, text="登录", command=login)
-btn_login.pack(pady=15)
+# Style the login button
+btn_login = Button(root, text="登录", command=login, style="Custom.TButton")
+btn_login.pack(pady=20)
+
+# Add a custom style for the button
+style = Style()
+style.configure("Custom.TButton", font=("Microsoft YaHei", 12), padding=6)
 
 root.mainloop()
